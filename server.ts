@@ -861,7 +861,18 @@ async function runSqlQuery(sql: string): Promise<any> {
 }
 
 async function resolveName(name: string) {
-  const publicClient = createPublicClient({ chain: base, transport: http() });
+  const publicClient = createPublicClient({ 
+    chain: { 
+      id: 1, 
+      name: 'Ethereum',
+      nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+      rpcUrls: { 
+        default: { http: ['https://eth.llamarpc.com'] },
+        public: { http: ['https://eth.llamarpc.com'] }
+      }
+    },
+    transport: http('https://eth.llamarpc.com') 
+  });
   const address = await publicClient.getEnsAddress({ name });
   
   if (!address) {
@@ -872,7 +883,18 @@ async function resolveName(name: string) {
 }
 
 async function getNameForAddress(address: string) {
-  const publicClient = createPublicClient({ chain: base, transport: http() });
+  const publicClient = createPublicClient({ 
+    chain: { 
+      id: 1, 
+      name: 'Ethereum',
+      nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+      rpcUrls: { 
+        default: { http: ['https://eth.llamarpc.com'] },
+        public: { http: ['https://eth.llamarpc.com'] }
+      }
+    },
+    transport: http('https://eth.llamarpc.com') 
+  });
   const ensName = await publicClient.getEnsName({ address: address as `0x${string}` });
   return { address, name: ensName || null };
 }
