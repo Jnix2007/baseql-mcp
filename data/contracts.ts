@@ -31,7 +31,7 @@ export const BASE_CONTRACTS = {
     symbol: "DAI",
     name: "Dai Stablecoin"
   },
-  cbBTC: {
+  CBBTC: {
     address: "0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf",
     decimals: 8,
     symbol: "cbBTC",
@@ -91,7 +91,7 @@ export const BASE_CONTRACTS = {
     symbol: "AAVE",
     name: "Aave"
   },
-  cbETH: {
+  CBETH: {
     address: "0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22",
     decimals: 18,
     symbol: "cbETH",
@@ -236,7 +236,7 @@ export const BASE_CONTRACTS = {
     name: "Mountain Protocol USD"
   },
   TYBG: {
-    address: "0x0d97F261b1e88845184f678e2d1e7a98D9FD38dE",
+    address: "0x0d97f261b1e88845184f678e2d1e7a98d9fd38de",
     decimals: 18,
     symbol: "TYBG",
     name: "TYBG"
@@ -259,7 +259,7 @@ export const BASE_CONTRACTS = {
     symbol: "MCADE",
     name: "Metacade"
   },
-  cbXRP: {
+  CBXRP: {
     address: "0xcb585250f852c6c6bf90434ab21a00f02833a4af",
     decimals: 6,
     symbol: "cbXRP",

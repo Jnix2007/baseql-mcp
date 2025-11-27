@@ -295,12 +295,21 @@ mcpServer.tool(
   },
   async ({ name }) => {
     try {
+      // Use Ethereum mainnet for ENS/Basename resolution (universal resolver)
       const publicClient = createPublicClient({
-        chain: base,
-        transport: http()
+        chain: { 
+          id: 1, 
+          name: 'Ethereum',
+          nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+          rpcUrls: { 
+            default: { http: ['https://eth.llamarpc.com'] },
+            public: { http: ['https://eth.llamarpc.com'] }
+          }
+        },
+        transport: http('https://eth.llamarpc.com')
       });
       
-      // Get ENS address (viem handles normalization internally)
+      // Get ENS address (works for both .eth and .base.eth)
       const address = await publicClient.getEnsAddress({ name });
       
       if (!address) {
@@ -347,9 +356,18 @@ mcpServer.tool(
   },
   async ({ address }) => {
     try {
+      // Use Ethereum mainnet for reverse resolution
       const publicClient = createPublicClient({
-        chain: base,
-        transport: http()
+        chain: { 
+          id: 1, 
+          name: 'Ethereum',
+          nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+          rpcUrls: { 
+            default: { http: ['https://eth.llamarpc.com'] },
+            public: { http: ['https://eth.llamarpc.com'] }
+          }
+        },
+        transport: http('https://eth.llamarpc.com')
       });
       
       // Attempt reverse ENS lookup
@@ -387,6 +405,86 @@ mcpServer.tool(
           text: JSON.stringify({
             error: error instanceof Error ? error.message : "Reverse lookup failed",
             address: address
+          }, null, 2)
+        }]
+      };
+    }
+  }
+);
+
+// Get Token Age (first transfer timestamp)
+mcpServer.tool(
+  "get_token_age",
+  "Find when a token first appeared on Base (first transfer timestamp). Use this to determine safe time window for holder queries.",
+  {
+    token_address: z.string().describe("Token contract address (lowercase)")
+  },
+  async ({ token_address }) => {
+    try {
+      const jwt = await generateJwt({
+        apiKeyId: process.env.CDP_API_KEY_ID!,
+        apiKeySecret: process.env.CDP_API_KEY_SECRET!,
+        requestMethod: "POST",
+        requestHost: "api.cdp.coinbase.com",
+        requestPath: "/platform/v2/data/query/run",
+        expiresIn: 120,
+      });
+
+      const sql = `
+SELECT 
+  MIN(block_timestamp) as first_transfer,
+  MAX(block_timestamp) as last_transfer,
+  COUNT(*) as total_transfers,
+  dateDiff('day', MIN(block_timestamp), NOW()) as days_old
+FROM base.transfers
+WHERE token_address = '${token_address.toLowerCase()}'
+`;
+
+      const response = await fetch('https://api.cdp.coinbase.com/platform/v2/data/query/run', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ sql }),
+      });
+
+      const data: any = await response.json();
+      
+      if (data.result && data.result.length > 0) {
+        const result = data.result[0];
+        const daysOld = parseInt(result.days_old);
+        
+        // Suggest safe time window (add 20% buffer)
+        const suggestedDays = Math.min(Math.ceil(daysOld * 1.2), 365);
+        
+        return {
+          content: [{
+            type: "text",
+            text: JSON.stringify({
+              first_transfer: result.first_transfer,
+              last_transfer: result.last_transfer,
+              days_old: daysOld,
+              total_transfers: result.total_transfers,
+              suggested_query_window: `${suggestedDays} days (covers complete history with buffer)`,
+              recommendation: `Use: AND block_timestamp > NOW() - INTERVAL ${suggestedDays} DAY`
+            }, null, 2)
+          }]
+        };
+      }
+      
+      return {
+        content: [{
+          type: "text",
+          text: "No transfers found for this token"
+        }]
+      };
+    } catch (error) {
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify({
+            error: error instanceof Error ? error.message : "Failed to get token age"
           }, null, 2)
         }]
       };
@@ -469,9 +567,18 @@ mcpServer.tool(
     addresses: z.array(z.string()).describe("Array of Ethereum addresses")
   },
   async ({ addresses }) => {
+    // Use Ethereum mainnet
     const publicClient = createPublicClient({
-      chain: base,
-      transport: http()
+      chain: { 
+        id: 1, 
+        name: 'Ethereum',
+        nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+        rpcUrls: { 
+          default: { http: ['https://eth.llamarpc.com'] },
+          public: { http: ['https://eth.llamarpc.com'] }
+          }
+        },
+      transport: http('https://eth.llamarpc.com')
     });
     
     const results = await Promise.allSettled(
