@@ -250,18 +250,13 @@ mcpServer.tool(
     symbol: z.string().describe("Contract symbol (USDC, WETH, etc.)")
   },
   async ({ symbol }) => {
-    const network = "mainnet";
-    const contract = getContract(symbol, network);
+    const contract = getContract(symbol);
     
     if (!contract) {
-      const available = network === "sepolia" 
-        ? Object.keys(BASE_SEPOLIA_CONTRACTS)
-        : Object.keys(BASE_CONTRACTS);
-      
       return {
         content: [{ 
           type: "text", 
-          text: `Not found on ${network}. Available: ${available.join(", ")}` 
+          text: `Not found. Available: ${Object.keys(BASE_CONTRACTS).join(", ")}` 
         }]
       };
     }
@@ -445,11 +440,11 @@ mcpServer.tool(
       return {
         content: [{
           type: "text",
-          text: JSON.stringify({
-            results: data.result,
-            rowCount: data.metadata?.rowCount,
-            executionTimeMs: data.metadata?.executionTimeMs
-          }, null, 2)
+        text: JSON.stringify({
+          results: (data as any).result,
+          rowCount: (data as any).metadata?.rowCount,
+          executionTimeMs: (data as any).metadata?.executionTimeMs
+        }, null, 2)
         }]
       };
     } catch (error) {
@@ -569,7 +564,7 @@ app.post('/call', async (req, res) => {
         result = await getSchemaData();
         break;
       case "get_contract":
-        result = await getContractData(params?.symbol, params?.network);
+        result = await getContractData(params?.symbol);
         break;
       case "get_query_template":
         result = await getTemplateData(params?.templateKey);
@@ -653,7 +648,7 @@ async function getTemplateData(templateKey: string) {
   return template;
 }
 
-async function runSqlQuery(sql: string) {
+async function runSqlQuery(sql: string): Promise<any> {
   const jwt = await generateJwt({
     apiKeyId: process.env.CDP_API_KEY_ID!,
     apiKeySecret: process.env.CDP_API_KEY_SECRET!,
@@ -677,7 +672,7 @@ async function runSqlQuery(sql: string) {
     return { error: `SQL API returned ${response.status}`, details: errorText };
   }
 
-  const data = await response.json();
+  const data: any = await response.json();
   return {
     results: data.result,
     rowCount: data.metadata?.rowCount,
