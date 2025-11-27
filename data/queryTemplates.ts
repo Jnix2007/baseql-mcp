@@ -365,5 +365,3 @@ LIMIT 50
 export type QueryTemplateKey = keyof typeof QUERY_TEMPLATES;
 
 
-export type QueryTemplateKey = keyof typeof QUERY_TEMPLATES;
-
