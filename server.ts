@@ -3,7 +3,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { CdpClient } from "@coinbase/cdp-sdk";
 import { createPublicClient, http } from "viem";
-import { base } from "viem/chains";
+import { base, mainnet } from "viem/chains";
 import { generateJwt } from "@coinbase/cdp-sdk/auth";
 import express from "express";
 import cors from "cors";
@@ -336,18 +336,10 @@ mcpServer.tool(
   },
   async ({ name }) => {
     try {
-      // Use Ethereum mainnet for ENS/Basename resolution (universal resolver)
+      // Use Ethereum mainnet for ENS/Basename resolution
       const publicClient = createPublicClient({
-        chain: { 
-          id: 1, 
-          name: 'Ethereum',
-          nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-          rpcUrls: { 
-            default: { http: ['https://eth.llamarpc.com'] },
-            public: { http: ['https://eth.llamarpc.com'] }
-          }
-        },
-        transport: http('https://eth.llamarpc.com')
+        chain: mainnet,
+        transport: http()
       });
       
       // Get ENS address (works for both .eth and .base.eth)
@@ -399,16 +391,8 @@ mcpServer.tool(
     try {
       // Use Ethereum mainnet for reverse resolution
       const publicClient = createPublicClient({
-        chain: { 
-          id: 1, 
-          name: 'Ethereum',
-          nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-          rpcUrls: { 
-            default: { http: ['https://eth.llamarpc.com'] },
-            public: { http: ['https://eth.llamarpc.com'] }
-          }
-        },
-        transport: http('https://eth.llamarpc.com')
+        chain: mainnet,
+        transport: http()
       });
       
       // Attempt reverse ENS lookup
@@ -610,16 +594,8 @@ mcpServer.tool(
   async ({ addresses }) => {
     // Use Ethereum mainnet
     const publicClient = createPublicClient({
-      chain: { 
-        id: 1, 
-        name: 'Ethereum',
-        nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-        rpcUrls: { 
-          default: { http: ['https://eth.llamarpc.com'] },
-          public: { http: ['https://eth.llamarpc.com'] }
-          }
-        },
-      transport: http('https://eth.llamarpc.com')
+      chain: mainnet,
+      transport: http()
     });
     
     const results = await Promise.allSettled(
@@ -862,16 +838,8 @@ async function runSqlQuery(sql: string): Promise<any> {
 
 async function resolveName(name: string) {
   const publicClient = createPublicClient({ 
-    chain: { 
-      id: 1, 
-      name: 'Ethereum',
-      nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-      rpcUrls: { 
-        default: { http: ['https://eth.llamarpc.com'] },
-        public: { http: ['https://eth.llamarpc.com'] }
-      }
-    },
-    transport: http('https://eth.llamarpc.com') 
+    chain: mainnet,
+    transport: http()
   });
   const address = await publicClient.getEnsAddress({ name });
   
@@ -884,16 +852,8 @@ async function resolveName(name: string) {
 
 async function getNameForAddress(address: string) {
   const publicClient = createPublicClient({ 
-    chain: { 
-      id: 1, 
-      name: 'Ethereum',
-      nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-      rpcUrls: { 
-        default: { http: ['https://eth.llamarpc.com'] },
-        public: { http: ['https://eth.llamarpc.com'] }
-      }
-    },
-    transport: http('https://eth.llamarpc.com') 
+    chain: mainnet,
+    transport: http()
   });
   const ensName = await publicClient.getEnsName({ address: address as `0x${string}` });
   return { address, name: ensName || null };
