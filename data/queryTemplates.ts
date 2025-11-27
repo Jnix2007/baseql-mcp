@@ -63,18 +63,29 @@ LIMIT 100
   },
 
   token_holders: {
-    description: "Find top holders of a token",
-    parameters: ["token_address", "min_balance"],
+    description: "Find top holders of a token by analyzing complete transfer history on Base",
+    parameters: ["token_address"],
     sql: `
 SELECT 
-  to_address as holder,
-  SUM(CASE WHEN to_address = holder THEN value ELSE -value END) as net_balance,
-  COUNT(*) as transfer_count
-FROM base.transfers
-WHERE contract_address = '{token_address}'
-GROUP BY to_address
-HAVING net_balance > {min_balance}
-ORDER BY net_balance DESC
+  holder,
+  SUM(net_change) as current_balance
+FROM (
+  SELECT to_address as holder, SUM(value) as net_change
+  FROM base.transfers
+  WHERE token_address = '{token_address}'
+  GROUP BY to_address
+  
+  UNION ALL
+  
+  SELECT from_address as holder, -SUM(value) as net_change
+  FROM base.transfers
+  WHERE token_address = '{token_address}'
+    AND from_address != '0x0000000000000000000000000000000000000000'
+  GROUP BY from_address
+) balances
+GROUP BY holder
+HAVING SUM(net_change) > 0
+ORDER BY current_balance DESC
 LIMIT 50
     `.trim()
   },
