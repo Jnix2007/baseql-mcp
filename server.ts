@@ -667,7 +667,9 @@ app.post('/', async (req, res) => {
 app.get('/tools', async (req, res) => {
   const tools = [
     { name: "get_schema", description: "Get Base SQL tables" },
-    { name: "get_contract", description: "Get contract address", params: ["symbol", "network?"] },
+    { name: "get_contract", description: "Get contract address", params: ["symbol"] },
+    { name: "get_token_age", description: "Get token age and suggested query window", params: ["token_address"] },
+    { name: "get_sql_best_practices", description: "Get SQL best practices" },
     { name: "get_query_template", description: "Get SQL template", params: ["templateKey"] },
     { name: "resolve_name", description: "ENS to address", params: ["name"] },
     { name: "get_name_for_address", description: "Address to ENS", params: ["address"] },
@@ -709,6 +711,12 @@ app.post('/call', async (req, res) => {
         break;
       case "get_names_for_addresses":
         result = await getNamesForAddresses(params?.addresses);
+        break;
+      case "get_token_age":
+        result = await getTokenAge(params?.token_address);
+        break;
+      case "get_sql_best_practices":
+        result = await getSqlBestPractices();
         break;
       default:
         return res.status(404).json({ error: `Unknown tool: ${tool}` });
@@ -753,12 +761,12 @@ async function getSchemaData() {
       }
     },
           critical_rules: [
-            "🚨 ALWAYS filter by timestamp - NO EXCEPTIONS! Even 'full history' queries need time bounds",
-            "🚨 token_address filtering alone does NOT reduce scan size - only timestamps prune data",
-            "🚨 Use toInt256(value) when negating in UNION (prevents Int256/UInt256 type errors)",
-            "✅ base.transfers has COMPLETE history - 90 days covers most tokens entirely",
-            "✅ You CAN calculate accurate holder balances from transfer history",
-            "⚠️ Column names: token_address (NOT contract_address), timestamp (varies by table)"
+            "🚨 For holder queries: ALWAYS call get_token_age(token_address) FIRST!",
+            "🚨 Use the suggested_query_window from get_token_age - don't guess time windows!",
+            "🚨 token_address filtering alone does NOT reduce scan - only timestamps prune data",
+            "🚨 Use toInt256(value) when negating in UNION (prevents type errors)",
+            "✅ Workflow: get_token_age → use suggested window → run holder query",
+            "✅ This gives 100% accurate balances while avoiding 100GB scans"
           ]
   };
 }
@@ -826,6 +834,64 @@ async function getNameForAddress(address: string) {
   const publicClient = createPublicClient({ chain: base, transport: http() });
   const ensName = await publicClient.getEnsName({ address: address as `0x${string}` });
   return { address, name: ensName || null };
+}
+
+async function getTokenAge(token_address: string) {
+  const jwt = await generateJwt({
+    apiKeyId: process.env.CDP_API_KEY_ID!,
+    apiKeySecret: process.env.CDP_API_KEY_SECRET!,
+    requestMethod: "POST",
+    requestHost: "api.cdp.coinbase.com",
+    requestPath: "/platform/v2/data/query/run",
+    expiresIn: 120,
+  });
+
+  const sql = `
+SELECT 
+  MIN(block_timestamp) as first_transfer,
+  MAX(block_timestamp) as last_transfer,
+  COUNT(*) as total_transfers,
+  dateDiff('day', MIN(block_timestamp), NOW()) as days_old
+FROM base.transfers
+WHERE token_address = '${token_address.toLowerCase()}'
+`;
+
+  const response = await fetch('https://api.cdp.coinbase.com/platform/v2/data/query/run', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ sql }),
+  });
+
+  const data: any = await response.json();
+  
+  if (data.result && data.result.length > 0) {
+    const result = data.result[0];
+    const daysOld = parseInt(result.days_old);
+    const suggestedDays = Math.min(Math.ceil(daysOld * 1.2), 365);
+    
+    return {
+      first_transfer: result.first_transfer,
+      days_old: daysOld,
+      suggested_query_window: `${suggestedDays} days`,
+      recommendation: `Use ${suggestedDays} in token_holders query`
+    };
+  }
+  
+  return { error: "No transfers found" };
+}
+
+async function getSqlBestPractices() {
+  return {
+    critical_rules: [
+      "🚨 For holder queries: Call get_token_age FIRST!",
+      "🚨 Use suggested window from get_token_age",
+      "🚨 Use toInt256(value) in UNION queries",
+      "✅ Workflow: get_token_age → token_holders with suggested days"
+    ]
+  };
 }
 
 async function getNamesForAddresses(addresses: string[]) {

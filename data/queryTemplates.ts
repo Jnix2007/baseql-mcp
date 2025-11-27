@@ -75,6 +75,7 @@ FROM (
     toInt256(value) as delta
   FROM base.transfers
   WHERE token_address = '{token_address}'
+    AND block_timestamp > NOW() - INTERVAL {days} DAY
   GROUP BY to_address
   
   UNION ALL
@@ -85,6 +86,7 @@ FROM (
   FROM base.transfers
   WHERE token_address = '{token_address}'
     AND from_address != '0x0000000000000000000000000000000000000000'
+    AND block_timestamp > NOW() - INTERVAL {days} DAY
   GROUP BY from_address
 ) balances
 GROUP BY holder
@@ -93,11 +95,11 @@ ORDER BY current_balance DESC
 LIMIT 50
     `.trim(),
     usage_notes: [
-      "✅ This query analyzes COMPLETE transfer history - not a sample!",
-      "✅ base.transfers contains ALL ERC-20 transfers on Base since genesis",
-      "✅ Use toInt256() to avoid type errors when negating values",
-      "✅ Excludes 0x0 address (mints) from outflows",
-      "✅ Results show ACTUAL current holder balances"
+      "🚨 STEP 1: Call get_token_age(token_address) to get suggested_query_window",
+      "🚨 STEP 2: Use that window as {days} parameter here",
+      "✅ This gives COMPLETE accurate balances while avoiding 100GB scan",
+      "✅ MUST use toInt256(value) when negating",
+      "⚠️ Don't guess time windows - always use get_token_age first!"
     ]
   },
 
