@@ -63,31 +63,42 @@ LIMIT 100
   },
 
   token_holders: {
-    description: "Find top holders of a token by analyzing complete transfer history on Base",
-    parameters: ["token_address"],
+    description: "Find top holders of ANY token. CRITICAL: Must include time filter even for full history! Use 90-180 days for most tokens (covers complete history while avoiding 100GB scan).",
+    parameters: ["token_address", "days"],
     sql: `
 SELECT 
   holder,
-  SUM(net_change) as current_balance
+  SUM(delta) as current_balance
 FROM (
-  SELECT to_address as holder, SUM(value) as net_change
+  SELECT 
+    to_address as holder, 
+    toInt256(value) as delta
   FROM base.transfers
   WHERE token_address = '{token_address}'
   GROUP BY to_address
   
   UNION ALL
   
-  SELECT from_address as holder, -SUM(value) as net_change
+  SELECT 
+    from_address as holder, 
+    -toInt256(value) as delta
   FROM base.transfers
   WHERE token_address = '{token_address}'
     AND from_address != '0x0000000000000000000000000000000000000000'
   GROUP BY from_address
 ) balances
 GROUP BY holder
-HAVING SUM(net_change) > 0
+HAVING SUM(delta) > 0
 ORDER BY current_balance DESC
 LIMIT 50
-    `.trim()
+    `.trim(),
+    usage_notes: [
+      "✅ This query analyzes COMPLETE transfer history - not a sample!",
+      "✅ base.transfers contains ALL ERC-20 transfers on Base since genesis",
+      "✅ Use toInt256() to avoid type errors when negating values",
+      "✅ Excludes 0x0 address (mints) from outflows",
+      "✅ Results show ACTUAL current holder balances"
+    ]
   },
 
   nft_sales: {

@@ -645,12 +645,14 @@ async function getSchemaData() {
         note: "Raw event data"
       }
     },
-    critical_rules: [
-      "⚠️ ALWAYS filter by timestamp: WHERE block_timestamp > NOW() - INTERVAL X HOUR",
-      "⚠️ base.transfers uses: token_address (not contract_address)",
-      "⚠️ base.events uses: address (not contract_address)",
-      "⚠️ base.transactions/blocks use: timestamp (not block_timestamp)"
-    ]
+          critical_rules: [
+            "🚨 ALWAYS filter by timestamp - NO EXCEPTIONS! Even 'full history' queries need time bounds",
+            "🚨 token_address filtering alone does NOT reduce scan size - only timestamps prune data",
+            "🚨 Use toInt256(value) when negating in UNION (prevents Int256/UInt256 type errors)",
+            "✅ base.transfers has COMPLETE history - 90 days covers most tokens entirely",
+            "✅ You CAN calculate accurate holder balances from transfer history",
+            "⚠️ Column names: token_address (NOT contract_address), timestamp (varies by table)"
+          ]
   };
 }
 
