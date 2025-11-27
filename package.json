@@ -1,0 +1,31 @@
+{
+  "name": "baseql-mcp",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "MCP server providing Base SQL API context and query tools",
+  "scripts": {
+    "dev": "tsx server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "keywords": [
+    "mcp",
+    "base",
+    "sql",
+    "x402"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@coinbase/cdp-sdk": "^1.38.6",
+    "@modelcontextprotocol/sdk": "^1.23.0",
+    "dotenv": "^17.2.3",
+    "viem": "^2.40.3",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}
