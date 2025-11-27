@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { CdpClient } from "@coinbase/cdp-sdk";
 import { createPublicClient, http } from "viem";
 import { base } from "viem/chains";
@@ -534,7 +535,28 @@ app.get('/', (req, res) => {
   });
 });
 
-// GET /tools - List all tools
+// MCP-over-HTTP endpoint (for ChatGPT)
+app.post('/', async (req, res) => {
+  // Set headers for MCP
+  if (!req.headers.accept) {
+    req.headers.accept = 'application/json, text/event-stream';
+  }
+
+  // Create transport for this request
+  const transport = new StreamableHTTPServerTransport({
+    sessionIdGenerator: undefined,
+    enableJsonResponse: true
+  });
+
+  res.on('close', () => {
+    transport.close();
+  });
+
+  await mcpServer.connect(transport);
+  await transport.handleRequest(req, res, req.body);
+});
+
+// GET /tools - List all tools (for testing)
 app.get('/tools', async (req, res) => {
   const tools = [
     { name: "get_schema", description: "Get Base SQL tables" },
