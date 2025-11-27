@@ -243,10 +243,51 @@ mcpServer.tool(
   }
 );
 
+// Reverse Contract Lookup (address → info)
+mcpServer.tool(
+  "get_contract_by_address",
+  "Get contract info by address (reverse lookup). Returns symbol, name, decimals if we have it.",
+  {
+    address: z.string().describe("Contract address (0x...)")
+  },
+  async ({ address }) => {
+    const lowerAddress = address.toLowerCase();
+    const contract = Object.entries(BASE_CONTRACTS).find(
+      ([_, info]) => info.address.toLowerCase() === lowerAddress
+    );
+    
+    if (!contract) {
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify({
+            address: lowerAddress,
+            found: false,
+            note: "Address not in BaseQL registry"
+          }, null, 2)
+        }]
+      };
+    }
+    
+    return {
+      content: [{
+        type: "text",
+        text: JSON.stringify({
+          address: lowerAddress,
+          symbol: contract[1].symbol,
+          name: contract[1].name,
+          decimals: contract[1].decimals,
+          found: true
+        }, null, 2)
+      }]
+    };
+  }
+);
+
 // Get Contract
 mcpServer.tool(
   "get_contract",
-  "Get Base mainnet contract address",
+  "Get Base mainnet contract address by symbol",
   { 
     symbol: z.string().describe("Contract symbol (USDC, WETH, etc.)")
   },
@@ -412,10 +453,10 @@ mcpServer.tool(
   }
 );
 
-// Get Token Age (first transfer timestamp)
+// Get Token Age (REQUIRED for holder queries!)
 mcpServer.tool(
   "get_token_age",
-  "Find when a token first appeared on Base (first transfer timestamp). Use this to determine safe time window for holder queries.",
+  "🚨 REQUIRED FIRST STEP for holder queries! Returns exact days needed to query complete token history without 100GB scan. Always call this before token_holders template.",
   {
     token_address: z.string().describe("Token contract address (lowercase)")
   },
@@ -668,7 +709,7 @@ app.get('/tools', async (req, res) => {
   const tools = [
     { name: "get_schema", description: "Get Base SQL tables" },
     { name: "get_contract", description: "Get contract address", params: ["symbol"] },
-    { name: "get_token_age", description: "Get token age and suggested query window", params: ["token_address"] },
+    { name: "get_token_age", description: "🚨 CALL FIRST for holder queries! Returns safe time window", params: ["token_address"] },
     { name: "get_sql_best_practices", description: "Get SQL best practices" },
     { name: "get_query_template", description: "Get SQL template", params: ["templateKey"] },
     { name: "resolve_name", description: "ENS to address", params: ["name"] },

@@ -26,211 +26,211 @@ export const BASE_CONTRACTS = {
     name: "Wrapped Ether"
   },
   DAI: {
-    address: "0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb",
+    address: "0x50c5725949a6f0c72e6c4a641f24049a917db0cb",
     decimals: 18,
     symbol: "DAI",
     name: "Dai Stablecoin"
   },
   CBBTC: {
-    address: "0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf",
+    address: "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf",
     decimals: 8,
     symbol: "cbBTC",
     name: "Coinbase Wrapped BTC"
   },
   WBTC: {
-    address: "0x0555E30da8f98308EdB960aa94C0Db47230d2B9c",
+    address: "0x0555e30da8f98308edb960aa94c0db47230d2b9c",
     decimals: 8,
     symbol: "WBTC",
     name: "Wrapped Bitcoin"
   },
   LINK: {
-    address: "0x88Fb150BDc53A65fe94Dea0c9BA0a6dAf8C6e196",
+    address: "0x88fb150bdc53a65fe94dea0c9ba0a6daf8c6e196",
     decimals: 18,
     symbol: "LINK",
     name: "Chainlink"
   },
   USDS: {
-    address: "0x820C137fa70C8691f0e44Dc420a5e53c168921Dc",
+    address: "0x820c137fa70c8691f0e44dc420a5e53c168921dc",
     decimals: 18,
     symbol: "USDS",
     name: "USDS Stablecoin"
   },
   weETH: {
-    address: "0x04C0599Ae5A44757c0af6F9eC3b93da8976c150A",
+    address: "0x04c0599ae5a44757c0af6f9ec3b93da8976c150a",
     decimals: 18,
     symbol: "weETH",
     name: "Wrapped eETH"
   },
   USDe: {
-    address: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34",
+    address: "0x5d3a1ff2b6bab83b63cd9ad0787074081a52ef34",
     decimals: 18,
     symbol: "USDe",
     name: "Ethena USDe"
   },
   sUSDe: {
-    address: "0x211Cc4DD073734dA055fbF44a2b4667d5E5fE5d2",
+    address: "0x211cc4dd073734da055fbf44a2b4667d5e5fe5d2",
     decimals: 18,
     symbol: "sUSDe",
     name: "Ethena Staked USDe"
   },
   AERO: {
-    address: "0x940181a94A35A4569E4529A3CDfB74e38FD98631",
+    address: "0x940181a94a35a4569e4529a3cdfb74e38fd98631",
     decimals: 18,
     symbol: "AERO",
     name: "Aerodrome Finance"
   },
   VIRTUAL: {
-    address: "0x0b3e328455c4059EEb9e3f84b5543F74E24e7E1b",
+    address: "0x0b3e328455c4059eeb9e3f84b5543f74e24e7e1b",
     decimals: 18,
     symbol: "VIRTUAL",
     name: "Virtuals Protocol"
   },
   AAVE: {
-    address: "0x63706e401c06ac8513145b7687A14804d17f814b",
+    address: "0x63706e401c06ac8513145b7687a14804d17f814b",
     decimals: 18,
     symbol: "AAVE",
     name: "Aave"
   },
   CBETH: {
-    address: "0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22",
+    address: "0x2ae3f1ec7f1f5012cfeab0185bfc7aa3cf0dec22",
     decimals: 18,
     symbol: "cbETH",
     name: "Coinbase Wrapped Staked ETH"
   },
   EURC: {
-    address: "0x60a3E35Cc302bFA44Cb288Bc5a4F316Fdb1adb42",
+    address: "0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42",
     decimals: 6,
     symbol: "EURC",
     name: "Euro Coin"
   },
   ZRO: {
-    address: "0x6985884C4392D348587B19cb9eAAf157F13271cd",
+    address: "0x6985884c4392d348587b19cb9eaaf157f13271cd",
     decimals: 18,
     symbol: "ZRO",
     name: "LayerZero"
   },
   ZORA: {
-    address: "0x1111111111166b7FE7bd91427724B487980aFc69",
+    address: "0x1111111111166b7fe7bd91427724b487980afc69",
     decimals: 18,
     symbol: "ZORA",
     name: "Zora"
   },
   crvUSD: {
-    address: "0x417Ac0e078398C154EdFadD9Ef675d30Be60Af93",
+    address: "0x417ac0e078398c154edfadd9ef675d30be60af93",
     decimals: 18,
     symbol: "crvUSD",
     name: "Curve USD"
   },
   W: {
-    address: "0xB0fFa8000886e57F86dd5264b9582b2Ad87b2b91",
+    address: "0xb0ffa8000886e57f86dd5264b9582b2ad87b2b91",
     decimals: 18,
     symbol: "W",
     name: "Wormhole"
   },
   BRETT: {
-    address: "0x532f27101965dd16442E59d40670FaF5eBB142E4",
+    address: "0x532f27101965dd16442e59d40670faf5ebb142e4",
     decimals: 18,
     symbol: "BRETT",
     name: "Brett"
   },
   TOSHI: {
-    address: "0xAC1Bd2486aAf3B5C0fc3Fd868558b082a531B2B4",
+    address: "0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4",
     decimals: 18,
     symbol: "TOSHI",
     name: "Toshi"
   },
   SUSHI: {
-    address: "0x7D49a065D17d6d4a55dc13649901fdBB98B2AFBA",
+    address: "0x7d49a065d17d6d4a55dc13649901fdbb98b2afba",
     decimals: 18,
     symbol: "SUSHI",
     name: "Sushi"
   },
   SNX: {
-    address: "0x22e6966B799c4D5B13BE962E1D117b56327FDa66",
+    address: "0x22e6966b799c4d5b13be962e1d117b56327fda66",
     decimals: 18,
     symbol: "SNX",
     name: "Synthetix"
   },
   AXL: {
-    address: "0x23ee2343B892b1BB63503a4FAbc840E0e2C6810f",
+    address: "0x23ee2343b892b1bb63503a4fabc840e0e2c6810f",
     decimals: 6,
     symbol: "AXL",
     name: "Axelar"
   },
   YFI: {
-    address: "0x9EaF8C1E34F05a589EDa6BAfdF391Cf6Ad3CB239",
+    address: "0x9eaf8c1e34f05a589eda6bafdf391cf6ad3cb239",
     decimals: 18,
     symbol: "YFI",
     name: "yearn.finance"
   },
   COMP: {
-    address: "0x9e1028F5F1D5eDE59748FFceE5532509976840E0",
+    address: "0x9e1028f5f1d5ede59748ffcee5532509976840e0",
     decimals: 18,
     symbol: "COMP",
     name: "Compound"
   },
   CRV: {
-    address: "0x8Ee73c484A26e0A5df2Ee2a4960B789967dd0415",
+    address: "0x8ee73c484a26e0a5df2ee2a4960b789967dd0415",
     decimals: 18,
     symbol: "CRV",
     name: "Curve DAO"
   },
   PENDLE: {
-    address: "0xA99F6e6785Da0F5d6fB42495Fe424BCE029Eeb3E",
+    address: "0xa99f6e6785da0f5d6fb42495fe424bce029eeb3e",
     decimals: 18,
     symbol: "PENDLE",
     name: "Pendle"
   },
   ETHFI: {
-    address: "0x6C240DDA6b5c336DF09A4D011139beAAa1eA2Aa2",
+    address: "0x6c240dda6b5c336df09a4d011139beaaa1ea2aa2",
     decimals: 18,
     symbol: "ETHFI",
     name: "Ether.fi"
   },
   COW: {
-    address: "0xc694a91e6b071bF030A18BD3053A7fE09B6DaE69",
+    address: "0xc694a91e6b071bf030a18bd3053a7fe09b6dae69",
     decimals: 18,
     symbol: "COW",
     name: "CoW Protocol"
   },
   DEGEN: {
-    address: "0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed",
+    address: "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
     decimals: 18,
     symbol: "DEGEN",
     name: "Degen"
   },
   CLANKER: {
-    address: "0x1bc0c42215582d5A085795f4baDbaC3ff36d1Bcb",
+    address: "0x1bc0c42215582d5a085795f4badbac3ff36d1bcb",
     decimals: 18,
     symbol: "CLANKER",
     name: "tokenbot"
   },
   AIXBT: {
-    address: "0x4F9Fd6Be4a90f2620860d680c0d4d5Fb53d1A825",
+    address: "0x4f9fd6be4a90f2620860d680c0d4d5fb53d1a825",
     decimals: 18,
     symbol: "AIXBT",
     name: "aixbt"
   },
   MOONWELL: {
-    address: "0xA88594D404727625A9437C3f886C7643872296AE",
+    address: "0xa88594d404727625a9437c3f886c7643872296ae",
     decimals: 18,
     symbol: "WELL",
     name: "Moonwell"
   },
   STG: {
-    address: "0xE3B53AF74a4BF62Ae5511055290838050bf764Df",
+    address: "0xe3b53af74a4bf62ae5511055290838050bf764df",
     decimals: 18,
     symbol: "STG",
     name: "Stargate Finance"
   },
   BAL: {
-    address: "0x4158734D47Fc9692176B5085E0F52ee0Da5d47F1",
+    address: "0x4158734d47fc9692176b5085e0f52ee0da5d47f1",
     decimals: 18,
     symbol: "BAL",
     name: "Balancer"
   },
   USDM: {
-    address: "0x59D9356E565Ab3A36dD77763Fc0d87fEaf85508C",
+    address: "0x59d9356e565ab3a36dd77763fc0d87feaf85508c",
     decimals: 18,
     symbol: "USDM",
     name: "Mountain Protocol USD"
@@ -259,6 +259,12 @@ export const BASE_CONTRACTS = {
     symbol: "MCADE",
     name: "Metacade"
   },
+  CBXEN: {
+    address: "0xffcbf84650ce02dafe96926b37a0ac5e34932fa5",
+    decimals: 18,
+    symbol: "cbXEN",
+    name: "cbXEN"
+  },
   CBXRP: {
     address: "0xcb585250f852c6c6bf90434ab21a00f02833a4af",
     decimals: 6,
@@ -266,19 +272,19 @@ export const BASE_CONTRACTS = {
     name: "Coinbase Wrapped XRP"
   },
   USDT: {
-    address: "0xfde4C96c8593536E31F229EA8f37b2ADa2699bb2",
+    address: "0xfde4c96c8593536e31f229ea8f37b2ada2699bb2",
     decimals: 6,
     symbol: "USDT",
     name: "Tether USD (Bridged)"
   },
   OLAS: {
-    address: "0x54330d28ca3357F294334BDC454a032e7f353416",
+    address: "0x54330d28ca3357f294334bdc454a032e7f353416",
     decimals: 18,
     symbol: "OLAS",
     name: "Autonolas"
   },
   ALI: {
-    address: "0x97c806e7665d3AFd84A8Fe1837921403D59F3Dcc",
+    address: "0x97c806e7665d3afd84a8fe1837921403d59f3dcc",
     decimals: 18,
     symbol: "ALI",
     name: "Artificial Liquid Intelligence"
@@ -286,7 +292,7 @@ export const BASE_CONTRACTS = {
   
   // NFT Collections
   BASENAMES: {
-    address: "0x03c4738Ee98aE44591e1A4A4F3CaB6641d95DD9a",
+    address: "0x03c4738ee98ae44591e1a4a4f3cab6641d95dd9a",
     name: "Basenames",
     description: "Base namespace registry",
     type: "ERC-721",
@@ -307,14 +313,14 @@ export const BASE_CONTRACTS = {
     category: "PFP"
   },
   ONCHAIN_SUMMER: {
-    address: "0x888888847d0F18e9BC85e9d4F58826B3e31dB90f",
+    address: "0x888888847d0f18e9bc85e9d4f58826b3e31db90f",
     name: "Onchain Summer",
     description: "Coinbase Onchain Summer collection",
     type: "ERC-721",
     category: "Event"
   },
   PARALLEL: {
-    address: "0x76BE3b62873462d2142405439777e971754E8E77",
+    address: "0x76be3b62873462d2142405439777e971754e8e77",
     name: "Parallel Alpha",
     description: "Parallel TCG cards on Base",
     type: "ERC-721",
@@ -342,7 +348,7 @@ export const BASE_CONTRACTS = {
     description: "Bridge between Ethereum and Base"
   },
   BASE_SOLANA_BRIDGE: {
-    address: "0x3154Cf16ccdb4C6d922629664174b904d80F2C35",
+    address: "0x3154cf16ccdb4c6d922629664174b904d80f2c35",
     name: "Base-Solana Bridge",
     description: "Bridge between Base and Solana (devnet-prod)"
   },
@@ -359,12 +365,12 @@ export const BASE_CONTRACTS = {
   
   // Coinbase Verifications
   COINBASE_INDEXER: {
-    address: "0x2c7eE1E5f416dfF40054c27A62f7B357C4E8619C",
+    address: "0x2c7ee1e5f416dff40054c27a62f7b357c4e8619c",
     name: "Coinbase Attestation Indexer",
     description: "Indexes Coinbase-issued verifications"
   },
   COINBASE_ATTESTER: {
-    address: "0x357458739F90461b99789350868CD7CF330Dd7EE",
+    address: "0x357458739f90461b99789350868cd7cf330dd7ee",
     name: "Coinbase Attester",
     description: "Issues Coinbase verifications"
   }
