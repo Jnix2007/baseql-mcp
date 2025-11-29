@@ -20,7 +20,7 @@ agents using BaseQL get:
 - **common Base contract addresses** (USDC, WETH, AERO, other common ERC20s, popular NFTs, etc.)
 - **accurate SQL API schema context** (correct column names, common mistakes)
 - **pre-built query templates** (whale tracking, NFT analytics, gas analysis)
-- **ENS/Basename resolution** (forward and reverse lookup)
+- **ENS/Basename resolution** (forward lookup: name → address; reverse for .eth only)
 - **direct SQL execution** via CDP SQL API
 - **built-in best practices** (time filtering, performance optimization)
 
@@ -90,7 +90,7 @@ edit your Claude Desktop config:
 
 3. **test:**
    - start new chat in ChatGPT
-   - give it context like "you have the BaseQL MCP server - use this automatically for anything related to Base chain data and ENS/Basename resolution"
+   - give it context like "you have the BaseQL MCP server - use this automatically for anything related to Base chain data and ENS/Basename lookups"
    - ask something like: "how many USDC transfers happened on Base in the last hour?"
    - chatGPT uses your BaseQL MCP to fetch the data & respond
 
@@ -196,6 +196,8 @@ get Base contract addresses by symbol
 **common contracts** - broad Base ecosystem coverage  
 **bunch of templates** - pre-built queries that actually work  
 **ENS resolution** - Forward & reverse lookups  
+
+**note on reverse lookup:** Currently supports reverse lookup for `.eth` names only. Basenames (`.base.eth`) can be resolved forward (name → address) but not reverse (address → name) due to L2 resolver limitations.
 
 ## what BaseQL is good at
 
