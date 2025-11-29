@@ -89,21 +89,21 @@ app.post('/', async (req, res) => {
   await transport.handleRequest(req, res, req.body);
 });
 
-// GET /tools - list all tools (for testing)
-app.get('/tools', async (req, res) => {
-  const tools = [
-    { name: "get_schema", description: "get Base SQL tables" },
-    { name: "get_contract", description: "get contract address", params: ["symbol"] },
-    { name: "get_token_age", description: "🚨 CALL FIRST for holder queries! Returns safe time window", params: ["token_address"] },
-    { name: "get_sql_best_practices", description: "get SQL best practices" },
-    { name: "get_query_template", description: "get SQL template", params: ["templateKey"] },
-    { name: "resolve_name", description: "ENS to address", params: ["name"] },
-    { name: "get_name_for_address", description: "address to ENS", params: ["address"] },
-    { name: "get_names_for_addresses", description: "batch reverse lookup", params: ["addresses[]"] },
-    { name: "run_sql_query", description: "execute SQL query", params: ["sql"] }
-  ];
-  res.json({ tools });
-});
+  // GET /tools - list all tools (for testing)
+  app.get('/tools', async (req, res) => {
+    const tools = [
+      { name: "get_schema", description: "get Base SQL tables" },
+      { name: "get_contract", description: "get contract address", params: ["symbol"] },
+      { name: "get_token_age", description: "🚨 CALL FIRST for holder queries! Returns safe time window", params: ["token_address"] },
+      { name: "get_sql_best_practices", description: "get SQL best practices" },
+      { name: "get_query_template", description: "get SQL template", params: ["templateKey"] },
+      { name: "resolve_name", description: "resolve ENS/Basename to address (forward lookup)", params: ["name"] },
+      { name: "get_name_for_address", description: "address to .eth name (.eth only, NOT Basenames)", params: ["address"] },
+      { name: "get_names_for_addresses", description: "batch reverse lookup (.eth only, NOT Basenames)", params: ["addresses[]"] },
+      { name: "run_sql_query", description: "execute SQL query", params: ["sql"] }
+    ];
+    res.json({ tools });
+  });
 
 // POST /call - call a tool
 app.post('/call', async (req, res) => {

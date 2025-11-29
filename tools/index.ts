@@ -61,22 +61,22 @@ export function registerTools(mcpServer: McpServer) {
     }
   );
 
-  // ENS
-  mcpServer.tool("resolve_name", "resolve ENS/Basename to wallet address", { name: z.string() },
+  // ENS/Basename resolution
+  mcpServer.tool("resolve_name", "resolve ENS/Basename to address (forward lookup works for both .eth and .base.eth)", { name: z.string() },
     async ({ name }) => {
       const result = await resolveName(name);
       return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
     }
   );
 
-  mcpServer.tool("get_name_for_address", "resolve wallet address to any associated ENS/Basename", { address: z.string() },
+  mcpServer.tool("get_name_for_address", "reverse lookup: address to .eth name ONLY (does NOT work for .base.eth Basenames)", { address: z.string() },
     async ({ address }) => {
       const result = await getNameForAddress(address);
       return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
     }
   );
 
-  mcpServer.tool("get_names_for_addresses", "batch reverse lookup", { addresses: z.array(z.string()) },
+  mcpServer.tool("get_names_for_addresses", "batch reverse lookup for .eth names ONLY (does NOT work for .base.eth Basenames)", { addresses: z.array(z.string()) },
     async ({ addresses }) => {
       const result = await getNamesForAddresses(addresses);
       return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
