@@ -40,17 +40,17 @@ LIMIT 20
   },
 
   wallet_activity: {
-    description: "Get all activity for a specific wallet",
+    description: "Get all token transfer activity for a specific wallet",
     parameters: ["address", "days"],
     sql: `
 SELECT 
   block_timestamp,
-  transaction_hash,
+  transaction_to,
   CASE 
     WHEN from_address = '{address}' THEN 'SENT'
     ELSE 'RECEIVED'
   END as direction,
-  contract_address,
+  token_address,
   value,
   from_address,
   to_address
