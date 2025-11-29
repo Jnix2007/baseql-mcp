@@ -39,8 +39,8 @@ LIMIT 20
     `.trim()
   },
 
-  wallet_activity: {
-    description: "Get all token transfer activity for a specific wallet",
+  wallet_token_transfers: {
+    description: "Get token transfer activity (ERC-20/721/1155) for a wallet",
     parameters: ["address", "days"],
     sql: `
 SELECT 
@@ -60,6 +60,30 @@ WHERE (from_address = '{address}' OR to_address = '{address}')
 ORDER BY block_timestamp DESC
 LIMIT 100
     `.trim()
+  },
+
+  wallet_transactions: {
+    description: "Get ALL transactions for a wallet (including native ETH transfers)",
+    parameters: ["address", "days"],
+    sql: `
+SELECT 
+  timestamp,
+  transaction_hash,
+  CASE 
+    WHEN from_address = '{address}' THEN 'SENT'
+    ELSE 'RECEIVED'
+  END as direction,
+  value,
+  gas,
+  from_address,
+  to_address
+FROM base.transactions
+WHERE (from_address = '{address}' OR to_address = '{address}')
+  AND timestamp > NOW() - INTERVAL {days} DAY
+ORDER BY timestamp DESC
+LIMIT 100
+    `.trim(),
+    notes: "⚠️ Use 'timestamp' not 'block_timestamp' for base.transactions table!"
   },
 
   token_holders: {
