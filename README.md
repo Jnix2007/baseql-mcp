@@ -90,6 +90,7 @@ edit your Claude Desktop config:
 
 3. **test:**
    - start new chat in ChatGPT
+   - give it context like "you have the BaseQL MCP server - use this automatically for anything related to Base chain data and ENS/Basename resolution"
    - ask something like: "how many USDC transfers happened on Base in the last hour?"
    - chatGPT uses your BaseQL MCP to fetch the data & respond
 
@@ -154,90 +155,75 @@ get Base contract addresses by symbol
 ```
 
 **supports:**
-- **46 tokens** (USDC, WETH, AERO, DEGEN, TYBG, JESSE, etc.)
-- **8 NFT collections** (Basenames, Based Fellas, Base Punks, Base Gods, etc.)
-- **Infrastructure** (Bridges, EAS, Coinbase Verifications)
+- **bunch of common tokens** (USDC, WETH, AERO, DEGEN, TYBG, JESSE, etc.)
+- **a few NFT collections** (Basenames, Based Fellas, Base Punks, Base Gods, etc.)
+- **infra stuff** (Bridges, EAS, Coinbase Verifications)
 - Base mainnet only
 
-### 3. `get_query_template`
-get pre-built SQL query templates
+## query templates
 
-**example:**
-```json
-{
-  "tool": "get_query_template",
-  "params": {
-    "templateKey": "whale_transfers"
-  }
-}
-```
+**pre-built templates** for common queries:
 
-**available templates:**
+**token analysis:**
 - `whale_transfers` - large token movements
-- `trending_tokens` - tokens with sudden activity
-- `wallet_activity` - complete wallet history
+- `trending_tokens` - surge activity detection
+- `token_holders` - top receivers (can be a proxy for holders)
+- `dex_swap_volume` - DEX trading activity
+
+**wallet analysis:**
+- `wallet_token_transfers` - token activity for address
+- `wallet_transactions` - all transactions including ETH
 - `gas_analysis` - gas spending patterns
-- `nft_mints` - NFT minting activity
-- `coinbase_verified_users` - addresses associated with Coinbase accounts (i.e. that have KYC'd at some point)
+
+**NFT tracking:**
+- `nft_mints` - mint activity
+- `nft_whale_collectors` - top NFT holders
 - `basename_registrations` - new .base.eth names
-- and a bunch more
 
-### 4. `run_sql_query`
-execute actual SQL queries against Base blockchain
+**verification:**
+- `coinbase_verified_wallets_simple` - Coinbase-KYC'd addresses (via Coinbase Verifications EAS)
+- `check_verifications` - check specific address
+- `us_verified_wallets` - US-verified users
 
-**example:**
-```json
-{
-  "tool": "run_sql_query",
-  "params": {
-    "sql": "SELECT COUNT(*) FROM base.transfers WHERE token_address = '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913' AND block_timestamp > NOW() - INTERVAL 1 HOUR"
-  }
-}
+**and more** - check `get_query_template` for full list
+
+## key features
+
+**realtime data** - <500ms from tip of chain
+**accurate schemas** - Correct column names, common mistakes documented  
+**smart workflows** - get_token_age prevents 100GB scans  
+**honest limitations** - get_capabilities tells agents what won't work  
+**common contracts** - broad Base ecosystem coverage  
+**bunch of templates** - pre-built queries that actually work  
+**ENS resolution** - Forward & reverse lookups  
+
+## what BaseQL is actually good at
+
+### ✅ realtime activity (last 1-7 days)
+```
+"how many USDC transfers in the last hour?"→ Works perfectly!
+"show me USDC whale transfers today"→ Fast and accurate
+"what tokens are trending in last 24h?"→ Great for discovery
+"recent Basename registrations this week"→ All mints tracked
 ```
 
-**returns:** realtime Base data (<500ms from tip of chain)
-
-### 5. `resolve_name`
-convert ENS/Basename to address
-
-**example:**
-```json
-{
-  "tool": "resolve_name",
-  "params": {
-    "name": "jnix.base.eth"
-  }
-}
+### ✅ token discovery & monitoring
+```
+"what's the TYBG token address?"
+"find new token launches today"
+"trending tokens last 24h by transfer count"
+"AERO trading volume last 6 hours"
 ```
 
-### 6. `get_name_for_address`
-reverse ENS lookup (address → name)
-
-### 7. `get_names_for_addresses`
-batch reverse lookup for multiple addresses
-
-## use cases for BaseQL MCP Server
-
-### DeFi analytics
+### ✅ event tracking
 ```
-"show me top AERO holders"
-"what's Uniswap V3 trading volume today?"
-"find wallets bridging >$100k"
+"recent Coinbase verifications"
+"new NFT mints in last hour"
+"bridge activity last 24h"
 ```
 
-### NFT tracking
-```
-"recent Basename registrations"
-"who owns the most Based Fellas?"
-"find NFT whale collectors"
-```
-
-### market intel
-```
-"find tokens with sudden activity surge"
-"track smart money moves"
-"what are whales buying?"
-```
+**use BaseQL for:** recent activity, trends, discovery, monitoring  
+**use external tools for:** historical balances, complete wallet history, complex analytics
 
 ## architecture
 
@@ -275,6 +261,8 @@ QUERY_PRICE=0.001
 
 get CDP API credentials from [CDP Portal](https://portal.cdp.coinbase.com/)
 
+if you have ENABLE_PAYMENTS set to **true** the code will automatically provision a CDP Server Wallet for your MCP Server to receive the x402 payments
+
 ### modes
 
 **stdio mode** (for Claude Desktop):
@@ -298,44 +286,8 @@ BaseQL documents all these gotchas
 ### guardrails
 queries without time filters can scan 100GB+ and fail; BaseQL teaches agents to **always** filter by time first
 
-### curated context
-repo of common contract addresses
-
 ### realtime data
 CDP SQL API is < 500ms from tip of chain, so BaseQL queries get near-instant Base data
-
-## examples
-
-### find USDC whales
-
-```bash
-# 1. get USDC address
-get_contract({ symbol: "USDC" })
-
-# 2. get template
-get_query_template({ templateKey: "whale_transfers" })
-
-# 3. run query
-run_sql_query({
-  sql: "SELECT from_address, value FROM base.transfers 
-        WHERE token_address = '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913' 
-        AND value > 1000000000000 
-        AND block_timestamp > NOW() - INTERVAL 24 HOUR 
-        LIMIT 20"
-})
-```
-
-### track Basename registrations
-
-```bash
-run_sql_query({
-  sql: "SELECT to_address, block_timestamp FROM base.transfers 
-        WHERE token_address = '0x03c4738ee98ae44591e1a4a4f3cab6641d95dd9a' 
-        AND from_address = '0x0000000000000000000000000000000000000000' 
-        AND block_timestamp > NOW() - INTERVAL 7 DAY 
-        LIMIT 50"
-})
-```
 
 ## license
 

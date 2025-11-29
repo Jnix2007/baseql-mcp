@@ -87,35 +87,48 @@ LIMIT 100
   },
 
   token_holders: {
-    description: "Find top holders of ANY token. CRITICAL: Must include time filter even for full history! Use 90-180 days for most tokens (covers complete history while avoiding 100GB scan).",
+    description: "Find top holders of a token with NET balances (received - sent). First call get_token_age to determine days parameter!",
     parameters: ["token_address", "days"],
     sql: `
+WITH all_transfers AS (
+  SELECT 
+    from_address,
+    to_address,
+    value
+  FROM base.transfers
+  WHERE token_address = '{token_address}'
+    AND block_timestamp > NOW() - INTERVAL {days} DAY
+),
+balances AS (
+  SELECT 
+    address,
+    SUM(received) - SUM(sent) as net_balance
+  FROM (
+    SELECT 
+      to_address as address,
+      SUM(toUInt256(value)) as received,
+      0 as sent
+    FROM all_transfers
+    GROUP BY to_address
+    
+    UNION ALL
+    
+    SELECT 
+      from_address as address,
+      0 as received,
+      SUM(toUInt256(value)) as sent
+    FROM all_transfers
+    WHERE from_address != '0x0000000000000000000000000000000000000000'
+    GROUP BY from_address
+  )
+  GROUP BY address
+)
 SELECT 
-  holder,
-  SUM(delta) as current_balance
-FROM (
-  SELECT 
-    to_address as holder, 
-    toInt256(value) as delta
-  FROM base.transfers
-  WHERE token_address = '{token_address}'
-    AND block_timestamp > NOW() - INTERVAL {days} DAY
-  GROUP BY to_address
-  
-  UNION ALL
-  
-  SELECT 
-    from_address as holder, 
-    -toInt256(value) as delta
-  FROM base.transfers
-  WHERE token_address = '{token_address}'
-    AND from_address != '0x0000000000000000000000000000000000000000'
-    AND block_timestamp > NOW() - INTERVAL {days} DAY
-  GROUP BY from_address
-) balances
-GROUP BY holder
-HAVING SUM(delta) > 0
-ORDER BY current_balance DESC
+  address as holder,
+  net_balance
+FROM balances
+WHERE net_balance > 0
+ORDER BY net_balance DESC
 LIMIT 50
     `.trim(),
     usage_notes: [
