@@ -12,6 +12,7 @@ import { runSqlQuery, getTokenAge } from "./helpers/sqlQuery.js";
 import { resolveName, getNameForAddress, getNamesForAddresses } from "./helpers/ensLookup.js";
 import { getContractData, getContractByAddress } from "./helpers/contractLookup.js";
 import { getSchemaData, getTemplateData, getCapabilities, getBestPractices } from "./helpers/metadata.js";
+import { getTokenPrice, getMultipleTokenPrices } from "./helpers/pricing.js";
 import { registerTools } from "./tools/index.js";
 
 dotenv.config();
@@ -100,7 +101,9 @@ app.post('/', async (req, res) => {
       { name: "resolve_name", description: "resolve ENS/Basename to address (forward lookup)", params: ["name"] },
       { name: "get_name_for_address", description: "address to .eth name (.eth only, NOT Basenames)", params: ["address"] },
       { name: "get_names_for_addresses", description: "batch reverse lookup (.eth only, NOT Basenames)", params: ["addresses[]"] },
-      { name: "run_sql_query", description: "execute SQL query", params: ["sql"] }
+      { name: "run_sql_query", description: "execute SQL query", params: ["sql"] },
+      { name: "get_token_price", description: "get CEX price from Coinbase Exchange", params: ["symbol"] },
+      { name: "get_multiple_token_prices", description: "batch get CEX prices", params: ["symbols[]"] }
     ];
     res.json({ tools });
   });
@@ -152,6 +155,12 @@ app.post('/call', async (req, res) => {
         break;
       case "get_names_for_addresses":
         result = await getNamesForAddresses(params?.addresses);
+        break;
+      case "get_token_price":
+        result = await getTokenPrice(params?.symbol);
+        break;
+      case "get_multiple_token_prices":
+        result = await getMultipleTokenPrices(params?.symbols);
         break;
       case "get_sql_best_practices":
         result = await getBestPractices();

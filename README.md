@@ -18,25 +18,26 @@ the **BaseQL MCP Server** gives an agent all the info and tools it needs to call
 
 agents using BaseQL get:
 - **common Base contract addresses** (USDC, WETH, AERO, other common ERC20s, popular NFTs, etc.)
-- **accurate SQL API schema context** (correct column names, common mistakes)
+- **SQL API schema context** (correct column names, common mistakes)
 - **pre-built query templates** (whale tracking, NFT analytics, gas analysis)
 - **ENS/Basename resolution** (forward lookup: name → address; reverse for .eth only)
 - **direct SQL execution** via CDP SQL API
 - **built-in best practices** (time filtering, performance optimization)
+- **realtime CEX pricing** (trading pairs from Coinbase CEX public pricing endpoint at https://api.coinbase.com/api/v3/brokerage/market/products/)
 
 ## how agents use this
 
 here's an example of what this unlocks for agents:
 
 ```
-user: "whow me USDC whale transfers in the last hour"
+user: "show me AERO whale transfers in the last hour and current price"
   ↓
 agent set up with BaseQL MCP:
-1. get_contract("USDC") → 0x833589fcd...
-2. get_query_template("whale_transfers") → SQL template
-3. fills in parameters
-4. run_sql_query(sql) → calls CDP SQL API, which returns Base data to the agent
-5. agent formats the data into natural language, and responds to the user
+1. get_token_price("AERO") → $0.67 (from Coinbase CEX)
+2. get_contract("AERO") → 0x940181a94a35a4569e4529a3cdfb74e38fd98631
+3. get_query_template("whale_transfers") → SQL template
+4. run_sql_query(sql) → calls CDP SQL API, returns onchain transfers
+5. agent combines CEX price + onchain activity → responds to user
 ```
 
 ## quickstart
@@ -189,15 +190,18 @@ get Base contract addresses by symbol
 
 ## key features
 
-**realtime data** - <500ms from tip of chain
+**realtime data** - <500ms from tip of chain  
 **accurate schemas** - Correct column names, common mistakes documented  
 **smart workflows** - get_token_age prevents 100GB scans  
 **honest limitations** - get_capabilities tells agents what won't work  
-**common contracts** - broad Base ecosystem coverage  
-**bunch of templates** - pre-built queries that actually work  
+**50+ contracts** - Curated Base ecosystem coverage  
+**20 templates** - Pre-built queries that actually work  
 **ENS resolution** - Forward & reverse lookups  
+**CEX pricing** - 831 trading pairs from Coinbase Exchange (5min cache)  
 
-**note on reverse lookup:** Currently supports reverse lookup for `.eth` names only. Basenames (`.base.eth`) can be resolved forward (name → address) but not reverse (address → name) due to L2 resolver limitations.
+**note on reverse ENS lookup:** currently supports reverse lookup for `.eth` names only. Basenames (`.base.eth`) can be resolved forward (name → address) but not reverse (address → name) due to L2 resolver limitations
+
+**note on pricing:** pricing data comes from Coinbase CEX (not onchain DEX pools); prices are cached for 5 minutes for performance
 
 ## what BaseQL is good at
 
@@ -229,43 +233,44 @@ get Base contract addresses by symbol
 
 ## example questions
 
-### 🔵 wallet intelligence
+### wallet intelligence
 ```
 "show me jnix.base.eth activity for the last 7 days"
 "what tokens is wallet X accumulating?"
 "which top AERO holders have Basenames?"
 ```
 
-### 🟩 token analytics
+### token analytics
 ```
 "what are the top trending tokens on Base right now?"
 "new tokens launched in last 24 hours"
-"show me TYBG's hourly volume for last 24h"
+"show me TYBG's hourly volume for last 24h and current price"
 "who bought the most JESSE today?"
+"what's the price of AERO and show me whale transfers"
 ```
 
-### 🟪 NFT tracking
+### NFT tracking
 ```
 "top trending NFT collections today"
 "which wallet minted most NFTs this week?"
 "recent Basename registrations"
 ```
 
-### 🔶 DEX intelligence
+### DEX intelligence
 ```
 "what tokens had highest swap volume today?"
 "find sudden whale inflows to new coins"
 "most active Uniswap pools last 6 hours"
 ```
 
-### 🌐 chain-wide insights
+### chain-wide insights
 ```
-"how many USDC transfers in last hour?" (answer: 277k!)
+"how many USDC transfers in last hour?"
 "which contract consumed most gas today?"
 "what times does Base see activity spikes?"
 ```
 
-### 🔥 discovery
+### discovery
 ```
 "why was there a spike in token X yesterday?"
 "find tokens with sudden holder growth"
@@ -328,7 +333,7 @@ learned the hard way that Base SQL tables have inconsistent column names:
 - `base.events` → `address`, `block_timestamp`
 - `base.transactions` → `from_address`, `timestamp` (NOT block_timestamp)
 
-BaseQL documents all these gotchas
+BaseQL documents all these gotchas, making it easy for your agent to use CDP SQL API
 
 ### guardrails
 queries without time filters can scan 100GB+ and fail; BaseQL teaches agents to **always** filter by time first

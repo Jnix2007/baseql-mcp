@@ -10,6 +10,7 @@ import { runSqlQuery, getTokenAge } from "../helpers/sqlQuery.js";
 import { resolveName, getNameForAddress, getNamesForAddresses } from "../helpers/ensLookup.js";
 import { getContractData, getContractByAddress } from "../helpers/contractLookup.js";
 import { getSchemaData, getTemplateData, getCapabilities, getBestPractices } from "../helpers/metadata.js";
+import { getTokenPrice, getMultipleTokenPrices } from "../helpers/pricing.js";
 
 export function registerTools(mcpServer: McpServer) {
   // schema
@@ -79,6 +80,21 @@ export function registerTools(mcpServer: McpServer) {
   mcpServer.tool("get_names_for_addresses", "batch reverse lookup for .eth names ONLY (does NOT work for .base.eth Basenames)", { addresses: z.array(z.string()) },
     async ({ addresses }) => {
       const result = await getNamesForAddresses(addresses);
+      return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+    }
+  );
+
+  // Pricing
+  mcpServer.tool("get_token_price", "Get CEX price from Coinbase Exchange (NOT onchain DEX price)", { symbol: z.string() },
+    async ({ symbol }) => {
+      const result = await getTokenPrice(symbol);
+      return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+    }
+  );
+
+  mcpServer.tool("get_multiple_token_prices", "Batch get CEX prices from Coinbase Exchange", { symbols: z.array(z.string()) },
+    async ({ symbols }) => {
+      const result = await getMultipleTokenPrices(symbols);
       return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
     }
   );

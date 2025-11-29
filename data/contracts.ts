@@ -265,6 +265,18 @@ export const BASE_CONTRACTS = {
     symbol: "cbXEN",
     name: "cbXEN"
   },
+  UMBRA: {
+    address: "0x6e8c690a7677ab88b3d665d447d14ac9affcbdaa",
+    decimals: 18,
+    symbol: "UMBRA",
+    name: "Umbra"
+  },
+  "AERO-CL-POS": {
+    address: "0x827922686190790b37229fd06084350e74485b72",
+    decimals: 0,
+    symbol: "AERO-CL-POS",
+    name: "Aerodrome CL Position Manager"
+  },
   CBXRP: {
     address: "0xcb585250f852c6c6bf90434ab21a00f02833a4af",
     decimals: 6,
@@ -339,6 +351,22 @@ export const BASE_CONTRACTS = {
     description: "Base Gods NFT collection",
     type: "ERC-721",
     category: "PFP"
+  },
+  DX_TERMINAL: {
+    address: "0x41dc69132cce31fcbf6755c84538ca268520246f",
+    name: "DX Terminal",
+    symbol: "TERMINAL",
+    description: "DX Terminal NFT collection",
+    type: "ERC-721",
+    category: "Utility"
+  },
+  SOSOVALUE: {
+    address: "0x624e2e7fdc8903165f64891672267ab0fcb98831",
+    name: "SoSoValue",
+    symbol: "SOSO",
+    description: "SoSoValue NFT collection",
+    type: "ERC-721",
+    category: "Utility"
   },
   
   // Infrastructure
