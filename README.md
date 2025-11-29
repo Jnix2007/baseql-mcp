@@ -8,7 +8,7 @@
 
 the SQL API from Coinbase Developer Platform (CDP) indexes all Base chain data across blocks, events, tranfers, transactions, and encoded logs, and lets you (or your agent) submit SQL queries against that rich dataset
 
-this is incredibly powerful because you don't need blockchain data infrastructure like indexers anymore; you simply call SQL API and get hyper-fresh data (<500ms to tip of chain) at blazing-fast latencies (<200ms)
+this is powerful because you don't need blockchain data infrastructure like indexers anymore; you simply call SQL API and get hyper-fresh data (<500ms to tip of chain) at blazing-fast latencies (<200ms)
 
 **BUT** agents need some help to use this powerful tool
 
@@ -197,7 +197,7 @@ get Base contract addresses by symbol
 **bunch of templates** - pre-built queries that actually work  
 **ENS resolution** - Forward & reverse lookups  
 
-## what BaseQL is actually good at
+## what BaseQL is good at
 
 ### ✅ realtime activity (last 1-7 days)
 ```
@@ -224,6 +224,51 @@ get Base contract addresses by symbol
 
 **use BaseQL for:** recent activity, trends, discovery, monitoring  
 **use external tools for:** historical balances, complete wallet history, complex analytics
+
+## example questions
+
+### 🔵 wallet intelligence
+```
+"show me jnix.base.eth activity for the last 7 days"
+"what tokens is wallet X accumulating?"
+"which top AERO holders have Basenames?"
+```
+
+### 🟩 token analytics
+```
+"what are the top trending tokens on Base right now?"
+"new tokens launched in last 24 hours"
+"show me TYBG's hourly volume for last 24h"
+"who bought the most JESSE today?"
+```
+
+### 🟪 NFT tracking
+```
+"top trending NFT collections today"
+"which wallet minted most NFTs this week?"
+"recent Basename registrations"
+```
+
+### 🔶 DEX intelligence
+```
+"what tokens had highest swap volume today?"
+"find sudden whale inflows to new coins"
+"most active Uniswap pools last 6 hours"
+```
+
+### 🌐 chain-wide insights
+```
+"how many USDC transfers in last hour?" (answer: 277k!)
+"which contract consumed most gas today?"
+"what times does Base see activity spikes?"
+```
+
+### 🔥 discovery
+```
+"why was there a spike in token X yesterday?"
+"find tokens with sudden holder growth"
+"what's unusual about Base activity today?"
+```
 
 ## architecture
 
